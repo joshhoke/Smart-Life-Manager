@@ -24,6 +24,9 @@ def load_data():
 def save_data():
     with open(DATA_FILE, "w") as f:
         json.dump(data, f, indent=2)
+        
+
+# == Printed Task Menu ==
 
 def print_task_menu():
     print("\n📝 Task Manager")
@@ -33,12 +36,16 @@ def print_task_menu():
     print("4. Delete a task")
     print("5. Go back")
 
+# == Top Main Menu ==
+
 def print_top_menu():
     print("\n🌟 Welcome to the Smart Life Manager")
     print("1. Manage Tasks")
     print("2. Manage Budget")
     print("3. Mood Tracker (coming soon)")
     print("4. Exit")
+
+# == Budget Tracker ==
 
 def budget_menu():
     today = datetime.now().strftime("%Y-%m-%d")
@@ -97,6 +104,8 @@ def budget_menu():
             break
         else:
             print("❌ Invalid option.")
+
+# == Task Manager ==
 
 def task_menu():
     global tasks
