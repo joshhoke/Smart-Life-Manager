@@ -78,7 +78,7 @@ def budget_menu():
         elif choice == "2":
             name = input("Expense name: ")
             try:
-                amount = float(input("How much was it?: $"))
+                amount = float(input("Amount: $"))
                 if amount < 0:
                     print("🚫 Amount can’t be negative.")
                     return
@@ -86,13 +86,16 @@ def budget_menu():
                 category_choice = input("Choose category: ")
                 category_map = {"1": "Need", "2": "Want", "3": "Saving"}
                 category = category_map.get(category_choice, "Uncategorized")
-                data["expenses"].append({
-                    "name": name,
-                    "amount": amount,
-                    "category": category
-                })
+        
+                today = str(datetime.now().date())
+                entry = [amount, name, category]
+        
+                if today not in data["expenses"]:
+                    data["expenses"][today] = []
+        
+                data["expenses"][today].append(entry)
                 save_data()
-                print(f"✅ Added {name} (${amount:.2f}) under {category}")
+                print(f"✅ Added {name} (${amount:.2f}) under {category} for {today}")
             except ValueError:
                 print("🚫 Invalid amount.")
         elif choice == "3":
