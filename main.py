@@ -66,21 +66,35 @@ def budget_menu():
 
         if choice == "1":
             try:
-                data["budget"] = float(input("Enter your daily budget: $"))
-                save_data()
-                print(f"✅ Daily budget set to ${data['budget']:.2f}")
+                new_budget = float(input("Enter daily budget: $"))
+                if new_budget < 0:
+                    print("🚫 Budget can’t be negative.")
+                else:
+                    data["budget"] = new_budget
+                    save_data()
+                    print(f"✅ Budget set to ${data['budget']:.2f}")
             except ValueError:
-                print("🚫 Please enter a valid number.")
+                print("🚫 Invalid number.")
         elif choice == "2":
+            name = input("Expense name: ")
             try:
-                amount = float(input("Enter expense amount: $"))
-                note = input("What was it for? ")
-                expenses_today.append([amount, note])
-                data["expenses"][today] = expenses_today
+                amount = float(input("How much was it?: $"))
+                if amount < 0:
+                    print("🚫 Amount can’t be negative.")
+                    return
+                print("📂 Category: [1] Need, [2] Want, [3] Saving")
+                category_choice = input("Choose category: ")
+                category_map = {"1": "Need", "2": "Want", "3": "Saving"}
+                category = category_map.get(category_choice, "Uncategorized")
+                data["expenses"].append({
+                    "name": name,
+                    "amount": amount,
+                    "category": category
+                })
                 save_data()
-                print(f"🧾 Expense added: ${amount:.2f} for '{note}'")
+                print(f"✅ Added {name} (${amount:.2f}) under {category}")
             except ValueError:
-                print("🚫 Please enter a valid number.")
+                print("🚫 Invalid amount.")
         elif choice == "3":
             if not expenses_today:
                 print("📭 No expenses logged.")
