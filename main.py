@@ -34,7 +34,8 @@ def print_task_menu():
     print("2. View all tasks")
     print("3. Mark a task as complete")
     print("4. Delete a task")
-    print("5. Go back")
+    print("5. Edit a task")
+    print("6. Go back")
 
 # == Top Main Menu ==
 
@@ -58,8 +59,9 @@ def budget_menu():
         print("1. Set daily budget")
         print("2. Add an expense")
         print("3. View today's spending")
-        print("4. Reset expenses")
-        print("5. Go back")
+        print("4. Edit an expense")
+        print("5. Reset expenses")
+        print("6. Go back")
         print("\n------------------------------------------\n\n")
 
         choice = input("Choose an option (1–4): ")
@@ -99,13 +101,14 @@ def budget_menu():
             except ValueError:
                 print("🚫 Invalid amount.")
         elif choice == "3":
+            expenses_today = data["expenses"].get(datetime.now().strftime("%Y-%m-%d"), [])
             if not expenses_today:
                 print("📭 No expenses logged.")
             else:
                 total = sum(item[0] for item in expenses_today)
                 print("\n📊 Today's Expenses:")
-                for amount, note in expenses_today:
-                    print(f"- ${amount:.2f} for {note}")
+                for amount, note, category in expenses_today:
+                    print(f"- ${amount:.2f} for {note} [{category}]")
                     print(f"\nTotal: ${total:.2f}")
                     print(f"Remaining: ${data['budget'] - total:.2f}")
         elif choice == "4":
@@ -118,6 +121,58 @@ def budget_menu():
                 else:
                     print("❌ Cancelled.")
         elif choice == "5":
+            if not data["expenses"]:
+                print("❌ No expenses recorded.")
+                continue
+            print("📅 Dates with expenses:")
+            for i, date in enumerate(data["expenses"], 1):
+                print(f"{i}. {date}")
+            try:
+                date_choice = int(input("Choose a date by number: "))
+                dates = list(data["expenses"].keys())
+                selected_date = dates[date_choice - 1]
+                expenses_on_date = data["expenses"][selected_date]
+        
+                for j, entry in enumerate(expenses_on_date, 1):
+                    amount, name, category = entry
+                    print(f"{j}. {name} - ${amount:.2f} [{category}]")
+        
+                expense_choice = int(input("Choose expense to edit: "))
+                if 1 <= expense_choice <= len(expenses_on_date):
+                    new_name = input("New name (leave blank to keep): ")
+                    new_amount = input("New amount (leave blank to keep): ")
+                    print("📂 Category: [1] Need, [2] Want, [3] Saving, [Enter] to keep")
+                    new_cat_input = input("Choose new category or press Enter: ")
+        
+                    amount, name, category = expenses_on_date[expense_choice - 1]
+        
+                    # Apply edits if provided
+                    if new_name:
+                        name = new_name
+                    if new_amount:
+                        try:
+                            amt = float(new_amount)
+                            if amt >= 0:
+                                amount = amt
+                            else:
+                                print("🚫 Cannot enter negative amounts.")
+                                continue
+                        except ValueError:
+                            print("🚫 Invalid number.")
+                            continue
+                    if new_cat_input:
+                        cat_map = {"1": "Need", "2": "Want", "3": "Saving"}
+                        category = cat_map.get(new_cat_input, category)
+        
+                    expenses_on_date[expense_choice - 1] = [amount, name, category]
+                    save_data()
+                    print("✅ Expense updated.")
+                else:
+                    print("🚫 Invalid selection.")
+            except (ValueError, IndexError):
+                print("🚫 Invalid input.")
+
+        elif choice == "6":
             break
         else:
             print("❌ Invalid option.")
@@ -176,6 +231,24 @@ def task_menu():
             except ValueError:
                 print("🚫 Please enter a number.")
         elif choice == "5":
+            if not data["tasks"]:
+                print("❌ No tasks to edit.")
+                continue
+            for i, task in enumerate(data["tasks"], 1):
+                print(f"{i}. {task}")
+            try:
+                task_num = int(input("Task number to edit: "))
+                if 1 <= task_num <= len(data["tasks"]):
+                    new_name = input("Enter new task name: ")
+                    data["tasks"][task_num - 1] = new_name
+                    save_data()
+                    print("✅ Task updated.")
+                else:
+                    print("🚫 Invalid task number.")
+            except ValueError:
+                print("🚫 Please enter a number.")
+                
+        elif choice == "6":
             break
         else:
             print("❌ Invalid option.")
