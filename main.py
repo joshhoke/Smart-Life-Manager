@@ -7,7 +7,9 @@ import os
 data = {
     "tasks": [],
     "budget": 0.0,
-    "expenses": {}  # Expenses by date
+    "expenses": {},  # Expenses by date
+    "completed_today": {},
+    "moods": {}
 }
 
 def load_data():
@@ -43,7 +45,7 @@ def print_top_menu():
     print("\n🌟 Welcome to the Smart Life Manager")
     print("1. Manage Tasks")
     print("2. Manage Budget")
-    print("3. Mood Tracker (coming soon)")
+    print("3. Mood Tracker")
     print("4. Exit")
 
 # == Budget Tracker ==
@@ -177,6 +179,45 @@ def budget_menu():
         else:
             print("❌ Invalid option.")
 
+
+# == Mood Tracker ==
+
+def mood_menu():
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    while True:
+        print("\n🎭 Mood Tracker")
+        print("1. Log today’s mood")
+        print("2. View mood history")
+        print("3. Go back")
+
+        choice = input("Choose an option: ")
+
+        if choice == "1":
+            try:
+                mood = int(input("How do you feel today (1 = 😞 to 5 = 😄)? "))
+                if 1 <= mood <= 5:
+                    data["moods"][today] = mood
+                    save_data()
+                    print("✅ Mood recorded.")
+                else:
+                    print("🚫 Must be between 1 and 5.")
+            except ValueError:
+                print("🚫 Please enter a number.")
+        elif choice == "2":
+            if not data["moods"]:
+                print("📭 No mood records yet.")
+            else:
+                print("📈 Mood History:")
+                for date, mood in sorted(data["moods"].items()):
+                    emoji = ["😞", "😐", "🙂", "😊", "😄"][mood - 1]
+                    print(f"{date}: {emoji} ({mood})")
+        elif choice == "3":
+            break
+        else:
+            print("❌ Invalid option.")
+
+
 # == Task Manager ==
 
 def task_menu():
@@ -208,6 +249,14 @@ def task_menu():
                 task_num = int(input("Enter task number to delete: "))
                 if 1 <= task_num <= len(data["tasks"]):
                     data["tasks"][task_num - 1] += " ✅"
+                    today = datetime.now().strftime("%Y-%m-%d")
+                    data["completed_today"][today] = data["completed_today"].get(today, 0) + 1
+                    
+                    # Daily goal check
+                    daily_goal = 3
+                    if data["completed_today"][today] >= daily_goal:
+                        print("🏆 Congratulations! You’ve hit your daily goal!")
+
                     print(f"Task marked complete: {data['tasks'][task_num - 1]}")
                     save_data()
                 else:
@@ -270,7 +319,7 @@ def main():
         elif choice == "2":
             budget_menu()
         elif choice == "3":
-            print("📊 Mood tracking coming soon.")
+            mood_menu()
         elif choice == "4":
             print("👋 Goodbye!")
             break
