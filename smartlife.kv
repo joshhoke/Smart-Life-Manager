@@ -41,7 +41,7 @@
         Button:
             text: "💰 Budget Manager"
             font_size: 20
-            # on_press: TODO
+            on_press: root.go_to_budget()
 
         Button:
             text: "🎭 Mood Tracker"
@@ -82,6 +82,64 @@
         ScrollView:
             BoxLayout:
                 id: task_box
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: 5
+                padding: 5
+
+        Button:
+            text: "🔙 Back"
+            size_hint_y: None
+            height: 50
+            on_press:
+                app.root.current = "dashboard"
+<BudgetManagerScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 10
+
+        Label:
+            text: "💰 Budget Manager"
+            font_size: 28
+            size_hint_y: None
+            height: 50
+
+        BoxLayout:
+            size_hint_y: None
+            height: 40
+            spacing: 10
+
+            TextInput:
+                id: budget_input
+                hint_text: "Set daily budget ($)"
+                input_filter: 'float'
+
+            Button:
+                text: "Set"
+                on_press: root.set_budget()
+
+        BoxLayout:
+            size_hint_y: None
+            height: 40
+            spacing: 10
+
+            TextInput:
+                id: expense_name
+                hint_text: "Expense name"
+            TextInput:
+                id: expense_amount
+                hint_text: "Amount"
+                input_filter: 'float'
+
+            Button:
+                text: "Add"
+                on_press: root.add_expense()
+
+        ScrollView:
+            BoxLayout:
+                id: expense_box
                 orientation: 'vertical'
                 size_hint_y: None
                 height: self.minimum_height

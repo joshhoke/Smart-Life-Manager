@@ -88,8 +88,10 @@ class DashboardScreen(Screen):
     def go_to_tasks(self):
         self.manager.get_screen("tasks").load_user(self.username)
         self.manager.current = "tasks"
+    def go_to_budget(self):
+        self.manager.get_screen("budget").load_user(self.username)
+        self.manager.current = "budget"
 
-    
 
 
 class TaskManagerScreen(Screen):
@@ -130,6 +132,22 @@ class TaskManagerScreen(Screen):
     def complete_task(self, index):
         if "✅" not in self.user_data["tasks"][index]:
             self.user_data["tasks"][index] += " ✅"
+            # XP logic
+            today = datetime.now().strftime("%Y-%m-%d")
+            completed_today = self.user_data["completed_today"].get(today, 0) + 1
+            self.user_data["completed_today"][today] = completed_today
+            
+            if completed_today == 3:
+                self.user_data["xp"] += 75
+            else:
+                self.user_data["xp"] += 25
+            
+            # Check for level up
+            level = self.user_data["level"]
+            if self.user_data["xp"] >= level * 100:
+                self.user_data["level"] += 1
+                print(f"🎉 Leveled up! Now level {self.user_data['level']}")
+            
             save_data()
             self.refresh_tasks()
 
@@ -139,6 +157,77 @@ class TaskManagerScreen(Screen):
         self.refresh_tasks()
 
 
+class BudgetManagerScreen(Screen):
+    def load_user(self, username):
+        self.username = username
+        self.user_data = data["users"][username]
+        self.refresh_expenses()
+        
+    def set_budget(self):
+        try:
+            value = float(self.ids.budget_input.text.strip())
+            self.user_data["budget"] = value
+            self.ids.budget_input.text = ""
+            save_data()
+            self.refresh_expenses()
+        except ValueError:
+            pass  # Handle UI feedback later
+        def add_expense(self):
+            name = self.ids.expense_name.text.strip()
+        try:
+            amount = float(self.ids.expense_amount.text.strip())
+        except ValueError:
+            return
+    def add_expense(self):
+        name = self.ids.expense_name.text.strip()
+        try:
+            amount = float(self.ids.expense_amount.text.strip())
+        except ValueError:
+            return
+
+        if name and amount >= 0:
+            today = datetime.now().strftime("%Y-%m-%d")
+            entry = [amount, name, "Uncategorized"]
+
+            if today not in self.user_data["expenses"]:
+                self.user_data["expenses"][today] = []
+
+            self.user_data["expenses"][today].append(entry)
+
+            self.ids.expense_name.text = ""
+            self.ids.expense_amount.text = ""
+
+            save_data()
+            self.refresh_expenses()
+
+
+    def refresh_expenses(self):
+        box = self.ids.expense_box
+        box.clear_widgets()
+        today = datetime.now().strftime("%Y-%m-%d")
+        expenses = self.user_data["expenses"].get(today, [])
+        total = sum(item[0] for item in expenses)
+
+        if not expenses:
+            box.add_widget(Label(text="No expenses today.", font_size=16))
+        else:
+            for amount, name, _ in expenses:
+                box.add_widget(Label(
+                text=f"{name}: ${amount:.2f}",
+                font_size=16,
+                size_hint_y=None,
+                height=30  # 📏 ensures spacing
+            ))
+
+        box.add_widget(Label(
+            text=f"💸 Spent: ${total:.2f} / ${self.user_data.get('budget', 0.0):.2f}",
+            font_size=18,
+            size_hint_y=None,
+            height=40
+        ))
+
+
+
 class SmartLifeApp(App):
     def build(self):
         load_data()
@@ -146,6 +235,7 @@ class SmartLifeApp(App):
         sm.add_widget(LoginScreen(name="login"))
         sm.add_widget(DashboardScreen(name="dashboard"))
         sm.add_widget(TaskManagerScreen(name="tasks"))
+        sm.add_widget(BudgetManagerScreen(name="budget"))
         return sm
 
 
