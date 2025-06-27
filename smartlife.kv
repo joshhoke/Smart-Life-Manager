@@ -1,0 +1,97 @@
+<LoginScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 30
+        spacing: 20
+
+        Label:
+            text: "Smart Life Manager"
+            font_size: 32
+
+        TextInput:
+            id: username_input
+            hint_text: "Enter your name"
+            multiline: False
+            font_size: 20
+
+        Button:
+            text: "Login"
+            font_size: 20
+            on_press: root.login()
+
+<DashboardScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 30
+        spacing: 20
+
+        Label:
+            id: user_label
+            font_size: 28
+
+        Label:
+            id: status_label
+            font_size: 20
+
+        Button:
+            text: "📋 Manage Tasks"
+            font_size: 20
+            on_press: root.go_to_tasks()
+
+        Button:
+            text: "💰 Budget Manager"
+            font_size: 20
+            # on_press: TODO
+
+        Button:
+            text: "🎭 Mood Tracker"
+            font_size: 20
+            # on_press: TODO
+
+        Button:
+            text: "Logout"
+            font_size: 18
+            on_press:
+                app.root.current = "login"
+<TaskManagerScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 10
+
+        Label:
+            text: "📝 Task Manager"
+            font_size: 28
+            size_hint_y: None
+            height: 50
+
+        BoxLayout:
+            size_hint_y: None
+            height: 40
+            spacing: 10
+
+            TextInput:
+                id: task_input
+                hint_text: "Enter a new task"
+                multiline: False
+
+            Button:
+                text: "Add"
+                on_press: root.add_task()
+
+        ScrollView:
+            BoxLayout:
+                id: task_box
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: 5
+                padding: 5
+
+        Button:
+            text: "🔙 Back"
+            size_hint_y: None
+            height: 50
+            on_press:
+                app.root.current = "dashboard"
+

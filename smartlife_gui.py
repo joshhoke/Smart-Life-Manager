@@ -3,8 +3,6 @@ from tkinter import ttk
 import json
 import os
 from datetime import datetime
-from tkinter import simpledialog
-
 
 DATA_FILE = "data.json"
 
@@ -26,6 +24,7 @@ def save_data():
     with open(DATA_FILE, "w") as f:
         json.dump(data, f)
 
+
 def ask_username():
     def submit():
         global username
@@ -42,7 +41,6 @@ def ask_username():
     tk.Button(login, text="Start", command=submit).pack(pady=5)
     login.grab_set()
     root.wait_window(login)
-
 
 username = ""
 root = tk.Tk()
@@ -98,31 +96,31 @@ dashboard_frame.pack()  # Show this first
 
 
 #Dashboard section
-def dashboard_design():
-    dashboard_title = tk.Label(dashboard_frame, text="📊 Smart Life Dashboard", font=("Arial", 16, "bold"))
-    dashboard_title.pack(pady=10)
-    
-    user_label = tk.Label(dashboard_frame, text="")
-    user_label.pack()
-    
-    level_label = tk.Label(dashboard_frame, text="")
-    level_label.pack()
-    
-    xp_bar = ttk.Progressbar(dashboard_frame, length=200)
-    xp_bar.pack(pady=5)
-    
-    streak_label = tk.Label(dashboard_frame, text="")
-    streak_label.pack()
-    
-    budget_summary_label = tk.Label(dashboard_frame, text="")
-    budget_summary_label.pack()
-    
-    task_summary_label = tk.Label(dashboard_frame, text="")
-    task_summary_label.pack()
-    
-    mood_summary_label = tk.Label(dashboard_frame, text="")
-    mood_summary_label.pack()
-dashboard_design()
+
+dashboard_title = tk.Label(dashboard_frame, text="📊 Smart Life Dashboard", font=("Arial", 16, "bold"))
+dashboard_title.pack(pady=10)
+
+user_label = tk.Label(dashboard_frame, text="")
+user_label.pack()
+
+level_label = tk.Label(dashboard_frame, text="")
+level_label.pack()
+
+xp_bar = ttk.Progressbar(dashboard_frame, length=200)
+xp_bar.pack(pady=5)
+
+streak_label = tk.Label(dashboard_frame, text="")
+streak_label.pack()
+
+budget_summary_label = tk.Label(dashboard_frame, text="")
+budget_summary_label.pack()
+
+task_summary_label = tk.Label(dashboard_frame, text="")
+task_summary_label.pack()
+
+mood_summary_label = tk.Label(dashboard_frame, text="")
+mood_summary_label.pack()
+
 
 def update_dashboard():
     today = datetime.now().strftime("%Y-%m-%d")
@@ -154,76 +152,21 @@ def update_dashboard():
 
 
 #Task section
-# Task list
-task_listbox = tk.Listbox(task_frame, width=50, height=6)
-task_listbox.pack()
-
-def refresh_tasks():
-    task_listbox.delete(0, tk.END)
-    for task in user_data["tasks"]:
-        task_listbox.insert(tk.END, task)
-refresh_tasks()
-
 # Task entry
 task_entry = tk.Entry(task_frame, width=40)
 task_entry.pack(pady=5)
 
 def add_task():
-    task = task_entry.get().strip()
+    task = task_entry.get()
     if task:
-        user_data["tasks"].append(task)  # ✅ saves to memory
-        save_data()                      # ✅ writes to data.json
+        task_listbox.insert(tk.END, task)
         task_entry.delete(0, tk.END)
-        refresh_tasks()                  # ✅ updates listbox
-        
-# Task completion
-def complete_task():
-    selected = task_listbox.curselection()
-    if selected:
-        idx = selected[0]
-        task = user_data["tasks"][idx]
-        if "✅" not in task:
-            user_data["tasks"][idx] += " ✅"
-            user_data["xp"] += 25
 
-            today = datetime.now().strftime("%Y-%m-%d")
-            user_data["completed_today"][today] = user_data["completed_today"].get(today, 0) + 1
-            if user_data["completed_today"][today] == 3:
-                user_data["xp"] += 75
-                messagebox.showinfo("🎉 Daily Goal", "You've completed 3 tasks today! +75 XP")
-
-            save_data()
-            update_dashboard()
-            refresh_tasks()
-            
-def delete_task():
-    selected = task_listbox.curselection()
-    if selected:
-        idx = selected[0]
-        del user_data["tasks"][idx]
-        save_data()
-        refresh_tasks()
-
-def edit_task():
-    selected = task_listbox.curselection()
-    if selected:
-        idx = selected[0]
-        new_name = simpledialog.askstring("Edit Task", "Enter new task name:")
-        if new_name:
-            user_data["tasks"][idx] = new_name
-            save_data()
-            refresh_tasks()
-            
-
-
-
-tk.Button(task_frame, text="Delete Task", command=delete_task).pack()
-tk.Button(task_frame, text="Edit Task", command=edit_task).pack()
 tk.Button(task_frame, text="Add Task", command=add_task).pack()
-tk.Button(task_frame, text="Complete Task", command=complete_task).pack()
 
-
-
+# Task list
+task_listbox = tk.Listbox(task_frame, width=50, height=6)
+task_listbox.pack()
 
 
 
