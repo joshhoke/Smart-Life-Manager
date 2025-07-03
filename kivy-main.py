@@ -378,6 +378,14 @@ class BudgetManagerScreen(Screen):
         cancel_btn.bind(on_press=lambda x: popup.dismiss())
     
         popup.open()
+        
+    def delete_expense(self, index):
+        today = datetime.now().strftime("%Y-%m-%d")
+        if today in self.user_data["expenses"] and 0 <= index < len(self.user_data["expenses"][today]):
+            del self.user_data["expenses"][today][index]
+            save_data()
+            self.refresh_expenses()
+
 
 
 class MoodTrackerScreen(Screen):
