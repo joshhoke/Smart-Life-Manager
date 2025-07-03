@@ -46,7 +46,7 @@
         Button:
             text: "🎭 Mood Tracker"
             font_size: 20
-            # on_press: TODO
+            on_press: root.go_to_mood()
 
         Button:
             text: "Logout"
@@ -145,6 +145,61 @@
                 height: self.minimum_height
                 spacing: 5
                 padding: 5
+	Button:
+	    text: "📊 Show Expense Graph"
+	    size_hint_y: None
+	    height: 50
+	    on_press: root.show_expense_graph()
+
+        Button:
+            text: "🔙 Back"
+            size_hint_y: None
+            height: 50
+            on_press:
+                app.root.current = "dashboard"
+<MoodTrackerScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 10
+
+        Label:
+            text: "🎭 Mood Tracker"
+            font_size: 28
+            size_hint_y: None
+            height: 50
+
+        BoxLayout:
+            size_hint_y: None
+            height: 40
+            spacing: 10
+
+            Label:
+                text: "How do you feel today (1-5)?"
+                font_size: 18
+            TextInput:
+                id: mood_input
+                hint_text: "1–5"
+                input_filter: 'int'
+                multiline: False
+
+            Button:
+                text: "Log"
+                on_press: root.log_mood()
+
+        ScrollView:
+            BoxLayout:
+                id: mood_box
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: 10
+                padding: 10
+	Button:
+	    text: "📈 Show Mood Graph"
+	    size_hint_y: None
+	    height: 50
+	    on_press: root.show_mood_graph()
 
         Button:
             text: "🔙 Back"
