@@ -1,5 +1,6 @@
 # Smart-Life-Manager
 Side Project for Personal Use. An app to manage homework and budget.
 
-Week 1:
-I've created a functional budget and task manager that saves using JSON.
+
+How to use:
+https://www.loom.com/share/5b3ebfa8a42f4cb78d75407948fa2e68?sid=87f4ece7-5f85-4f17-bd68-72adb68ad613
